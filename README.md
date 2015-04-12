@@ -11,10 +11,10 @@ Binding on an event, maintains the worker scope, so they can continue to process
 
 Actor Socket is single instance, so it listens and emits the same events all across your app.
 
-    require('actor-socket');
-
     var emitter = require('actor-emitter'),
         uuid    = require('node-uuid');
+
+    require('actor-socket')(emitter);
 
     var worker = (function() {
 
