@@ -1,5 +1,3 @@
-'use strict';
-
 var WebSocketClient = require('websocket').client,
     emitter = require('actor-emitter'),
     client = new WebSocketClient(),
@@ -11,9 +9,9 @@ var _queue = [];
 
 var _trigger = function (data, type) {
 
-    let code = data.future || data.__code__ || '';
+    var code = data.future || data.__code__ || '';
 
-    let key = data.header + ':' +
+    var key = data.header + ':' +
             data.action + (code ? ':' + code : '');
 
     if (type == 'in') {
@@ -67,7 +65,7 @@ var future = function(cb, data) {
 
 var wsOnMessage = function (msg) {
 
-    let data = JSON.parse(msg);
+    var data = JSON.parse(msg);
 
     emitter.next(_trigger, data, 'in');
 };
