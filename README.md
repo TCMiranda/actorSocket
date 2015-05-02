@@ -1,6 +1,6 @@
 # Actor Socket
 
-_Actor-socket_ is lightweight, independent, async, event based, websocket interface library, built with the "Websocket" module;
+_Actor-socket_ is lightweight, independent, async, event based, websocket client library, built with the "Websocket" module;
 
 ## Why
 
@@ -9,12 +9,20 @@ Binding on an event, maintains the worker scope, so they can continue to process
 
 ## How to Use It
 
+It uses json
+
+    {"header": "someheader", "action": "someaction" ... }
+
+When some message is recieved, it emmits and event, that can be bound with
+
+    emitter.bind('someheader:someaction', myCallback);
+
 Actor Socket is single instance, so it listens and emits the same events all across your app.
 
     var emitter = require('actor-emitter'),
         uuid    = require('node-uuid');
 
-    require('actor-socket')(emitter);
+    require('actor-socket');
 
     var worker = (function() {
 
@@ -38,12 +46,25 @@ Actor Socket is single instance, so it listens and emits the same events all acr
                 nick: 'mynick'
             }
 
-            emitter.trigger('socket.send', data);
+            emitter.trigger('socket:wait', data)
+                   .then(onRequestedUserPublic);
+        }
+
+        var onRequestedUserPublic = function (user) {
+
+            // for the "wait" function to work, your server
+            //  needs to send back the "future" param with the
+            //  data sent, and yes, im overwritting "future" attr.
+            console.log(user)
+            ...
+
         }
 
         emitter.bind('authentication:announce', onAuthenticationRequested);
         emitter.bind('authentication:announce:200', requestUserPublicProfile);
-    }
+
+        emitter.trigger('socket:connect', 'ws.yourserver.com:3000');
+    })()
 
 
 That example outputs something like this, assuming your server requests an authentication when connected
